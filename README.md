@@ -66,6 +66,14 @@ Formatting (`Space F`, never on save): ruff for Python, oxfmt for JS/TS/Vue/JSON
 
 Jinja templates use `.jinja` / `.j2` so `.html` stays plain HTML.
 
+Python: the nearest `pyrefly.toml` up the tree is Pyrefly's config, even past an app's own `pyproject.toml`. For a Frappe bench (a folder with `env/` and `apps/`, venv built in Docker), put one `pyrefly.toml` in the bench folder; every `apps/<name>` with `<name>/hooks.py` is added as a search path automatically (`:lsp restart` after adding an app):
+
+```toml
+skip-interpreter-query = true
+python-version = "3.14"
+site-packages-path = ["env/lib/python3.14/site-packages"]
+```
+
 ## Keys
 
 Leader is `Space`. `Space k` searches every key with its description.

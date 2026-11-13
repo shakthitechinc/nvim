@@ -117,6 +117,34 @@ vim.lsp.config("vtsls", {
 -- pyrefly: without a project config it uses the "basic" preset (few errors); "default" = Pyrefly's normal checks.
 -- A project's pyrefly.toml / [tool.pyrefly] still wins
 vim.lsp.config("pyrefly", { settings = { python = { pyrefly = { typeCheckingMode = "default" } } } })
+-- pyrefly: the nearest pyrefly.toml up the tree is the config, even past an app's own pyproject.toml
+-- (Pyrefly's own search stops at the first pyproject.toml). Frappe benches (pyrefly.toml + env/ + apps/):
+-- pyrefly.toml holds the static parts (python-version, site-packages-path, skip-interpreter-query) and every
+-- apps/<name> with <name>/hooks.py is added as a search path at start, so a new app only needs :lsp restart
+local pyrefly_markers = vim.lsp.config.pyrefly.root_markers
+local function frappe_apps(bench)
+  local apps = {}
+  if not (vim.uv.fs_stat(bench .. "/env") and vim.uv.fs_stat(bench .. "/apps")) then return apps end
+  for name, kind in vim.fs.dir(bench .. "/apps") do
+    if kind == "directory" and vim.uv.fs_stat(("%s/apps/%s/%s/hooks.py"):format(bench, name, name)) then
+      apps[#apps + 1] = bench .. "/apps/" .. name
+    end
+  end
+  table.sort(apps)
+  return apps
+end
+vim.lsp.config("pyrefly", {
+  root_dir = function(bufnr, on_dir)
+    on_dir(vim.fs.root(bufnr, "pyrefly.toml") or vim.fs.root(bufnr, pyrefly_markers))
+  end,
+  before_init = function(params, config)
+    local toml = config.root_dir and vim.fs.joinpath(config.root_dir, "pyrefly.toml")
+    if not (toml and vim.uv.fs_stat(toml)) then return end
+    local apps = frappe_apps(config.root_dir)
+    params.initializationOptions = vim.tbl_deep_extend("force", params.initializationOptions or {},
+      { pyrefly = { configPath = toml, extraSearchPaths = #apps > 0 and apps or nil } })
+  end,
+})
 -- Jinja templates use their own extension so .html stays plain HTML (Frappe templates stay .html)
 vim.filetype.add({ extension = { jinja = "jinja", jinja2 = "jinja", j2 = "jinja" } })
 -- .html: superhtml (Zig) does HTML; vscode-html only does CSS in <style> (its HTML suggestions + hover off).
