@@ -7,7 +7,7 @@ A single-file Neovim config (`init.lua`) for Neovim 0.12+, using the built-in pl
 - Neovim 0.12+
 - `git` (vim.pack installs plugins with it)
 - nvim-treesitter: [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md) 0.26.1+ (from a package manager, not npm), a C compiler, `tar`, `curl`
-- fzf-lua: `fzf` 0.36+, `ripgrep`, `fd`
+- fzf-lua: [skim](https://github.com/skim-rs/skim) (`sk`, used via fzf-lua's `skim` profile; or `fzf` 0.36+ with `fzf.setup({})`), `ripgrep`, `fd`
 - Node.js / npm and [uv](https://docs.astral.sh/uv/) for the language servers below
 - Clipboard (`Space y` / `Space p`): on WSL, `win32yank.exe` on `PATH` (it ships with Windows Neovim in `C:\Program Files\Neovim\bin`); on Linux, `wl-clipboard` or `xclip`
 
@@ -18,7 +18,7 @@ git clone git@github.com:shakthitechinc/nvim.git ~/.config/nvim
 nvim   # vim.pack installs the plugins on first start
 ```
 
-Plugins: vague.nvim (colorscheme), nvim-lspconfig, conform.nvim (formatting), nvim-treesitter, LuaSnip, fzf-lua.
+Plugins: vague.nvim (colorscheme), nvim-lspconfig, conform.nvim (formatting), nvim-treesitter, LuaSnip, fzf-lua (running skim).
 
 ### Tools
 

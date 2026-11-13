@@ -61,9 +61,9 @@ require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
 })
 
--- Fuzzy finder (uses fzf; set fzf_bin = "sk" to use skim). :FzfLua lists every picker
+-- Fuzzy finder, using skim (sk) via fzf-lua's "skim" profile; setup({}) switches back to fzf. :FzfLua lists every picker
 local fzf = require("fzf-lua")
-fzf.setup({})
+fzf.setup({ "skim" })
 map("n", "<Leader>f", fzf.files, { desc = "Find files" })
 map("n", "<Leader>g", fzf.live_grep, { desc = "Grep project" })
 map("n", "<Leader>*", fzf.grep_cword, { desc = "Grep word under cursor" })
