@@ -64,6 +64,7 @@ require("conform").setup({
 -- Fuzzy finder, using skim (sk) via fzf-lua's "skim" profile; setup({}) switches back to fzf. :FzfLua lists every picker
 local fzf = require("fzf-lua")
 fzf.setup({ "skim" })
+fzf.register_ui_select()  -- fzf-lua draws every vim.ui.select menu (code actions etc.)
 map("n", "<Leader>f", fzf.files, { desc = "Find files" })
 map("n", "<Leader>g", fzf.live_grep, { desc = "Grep project" })
 map("n", "<Leader>*", fzf.grep_cword, { desc = "Grep word under cursor" })
