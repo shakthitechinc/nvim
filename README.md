@@ -2,6 +2,14 @@
 
 A single-file Neovim config (`init.lua`) for Neovim 0.12+, using the built-in plugin manager (`vim.pack`), built-in LSP and built-in completion.
 
+## Requirements
+
+- Neovim 0.12+
+- `git` (vim.pack installs plugins with it)
+- nvim-treesitter: [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md) 0.26.1+ (from a package manager, not npm), a C compiler, `tar`, `curl`
+- fzf-lua: `fzf` 0.36+, `ripgrep`, `fd`
+- Node.js / npm and [uv](https://docs.astral.sh/uv/) for the language servers below
+
 ## Install
 
 ```sh
@@ -16,9 +24,8 @@ Plugins: vague.nvim (colorscheme), nvim-lspconfig, conform.nvim (formatting), nv
 The language servers and formatters are separate programs and need to be on `PATH`. npm packages go to `~/.local` so they survive Node version switches.
 
 ```sh
-# search (fzf-lua)
+# ripgrep + fd for fzf-lua
 sudo apt install ripgrep fd-find && ln -s "$(which fdfind)" ~/.local/bin/fd
-# plus fzf >= 0.36
 
 # Python
 uv tool install pyrefly
