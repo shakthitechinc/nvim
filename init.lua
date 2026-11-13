@@ -142,6 +142,51 @@ map("i", "<C-Space>", vim.lsp.completion.get, { desc = "LSP completion" })
 vim.g.markdown_folding = 1
 opt.foldlevelstart = 99  -- open files unfolded
 
+-- Markdown todos: Space t adds "- [ ] " to the end of this file's "# TODO" list (creates it if missing),
+-- Space x toggles the checkbox on the current line
+local function todo_add()
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local head
+  for i, l in ipairs(lines) do
+    if l:match("^#+%s+TODO%s*$") then head = i break end
+  end
+  local at  -- 0-based index to insert the new item at
+  if not head then
+    local add = (lines[#lines] or "") ~= "" and { "", "# TODO", "" } or { "# TODO", "" }
+    vim.api.nvim_buf_set_lines(0, #lines, #lines, false, add)
+    at = #lines + #add
+  else
+    for i = head + 1, #lines do
+      if lines[i]:match("^#") then break end
+      if lines[i]:match("^%s*[-*+] %[.%]") then at = i end
+    end
+    if not at then  -- empty list: keep a blank line under the heading
+      at = head
+      if lines[head + 1] == "" then at = head + 1 else vim.api.nvim_buf_set_lines(0, at, at, false, { "" }); at = at + 1 end
+      if lines[head + 2] and lines[head + 2] ~= "" and lines[head + 1] == "" then
+        vim.api.nvim_buf_set_lines(0, at, at, false, { "" })  -- blank line before the next section
+      end
+    end
+  end
+  vim.api.nvim_buf_set_lines(0, at, at, false, { "- [ ] " })
+  vim.api.nvim_win_set_cursor(0, { at + 1, 0 })
+  vim.cmd("startinsert!")
+end
+local function todo_toggle()
+  local l = vim.api.nvim_get_current_line()
+  local new = l:find("%[ %]") and l:gsub("%[ %]", "[x]", 1) or l:gsub("%[[xX]%]", "[ ]", 1)
+  vim.api.nvim_set_current_line(new)
+end
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function(args)
+    map("n", "<Leader>t", todo_add, { buffer = args.buf, desc = "Add todo to # TODO" })
+    map("n", "<Leader>x", todo_toggle, { buffer = args.buf, desc = "Toggle checkbox" })
+    map("n", "<Leader>T", function() require("fzf-lua").blines({ query = "'[ ] " }) end,
+      { buffer = args.buf, desc = "Jump to open todo" })
+  end,
+})
+
 -- Snippets: type the trigger, then Ctrl-J to expand; Ctrl-L / Ctrl-H jump between placeholders
 local ls = require("luasnip")
 ls.add_snippets("all", {
@@ -152,6 +197,8 @@ ls.add_snippets("all", {
     t.day = t.day + tonumber(snip.captures[1])
     return "# " .. os.date("%Y-%m-%d", os.time(t))
   end)),
+  ls.snippet("todo", { ls.text_node({ "# TODO", "", "- [ ] " }), ls.insert_node(0) }),
+  ls.snippet("tt", { ls.text_node("- [ ] "), ls.insert_node(0) }),
 })
 map("i", "<C-j>", function() if ls.expandable() then ls.expand() end end, { desc = "Expand snippet" })
 -- Ctrl-L / Ctrl-H also jump in vim.snippet (LSP completion snippets); Neovim's Tab / Shift-Tab for that are removed

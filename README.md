@@ -80,7 +80,17 @@ Tab is never used for snippets.
 
 - `date` → `# 2026-11-13` (today)
 - `date-1`, `date+2`, ... → days from today
+- `todo` → `# TODO` heading with a `- [ ] ` item
+- `tt` → `- [ ] `
 
 ## Markdown
 
 Folds by `#` headings only: `za` toggle, `zM` / `zR` close / open all.
+
+Todos (Markdown files only):
+
+| Key | Action |
+|---|---|
+| `Space t` | Add `- [ ] ` to the end of this file's `# TODO` list (creates the heading if missing) |
+| `Space x` | Toggle the checkbox on the current line |
+| `Space T` | Jump to an open todo (fzf-lua) |
