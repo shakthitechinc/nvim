@@ -16,6 +16,11 @@ opt.smartcase = true
 opt.signcolumn = "yes"
 opt.completeopt = "menuone,noinsert,popup,fuzzy"
 vim.g.netrw_bufsettings = "noma nomod nu nobl nowrap ro rnu"
+-- No remote plugins in Node/Python/Perl/Ruby (everything is Lua): skip those providers
+vim.g.loaded_node_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
 
 -- Keymaps
 local map = vim.keymap.set
