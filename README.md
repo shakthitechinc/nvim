@@ -9,6 +9,7 @@ A single-file Neovim config (`init.lua`) for Neovim 0.12+, using the built-in pl
 - nvim-treesitter: [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md) 0.26.1+ (from a package manager, not npm), a C compiler, `tar`, `curl`
 - fzf-lua: `fzf` 0.36+, `ripgrep`, `fd`
 - Node.js / npm and [uv](https://docs.astral.sh/uv/) for the language servers below
+- Clipboard (`Space y` / `Space p`): on WSL, `win32yank.exe` on `PATH` (it ships with Windows Neovim in `C:\Program Files\Neovim\bin`); on Linux, `wl-clipboard` or `xclip`
 
 ## Install
 
@@ -36,7 +37,16 @@ npm install -g --prefix ~/.local typescript@7 @vtsls/language-server @vue/langua
   vscode-langservers-extracted yaml-language-server @olrtg/emmet-language-server oxfmt
 ```
 
-Also on `PATH`: `lua-language-server`, plus the release binaries of [superhtml](https://github.com/kristoff-it/superhtml/releases) and [jinja-lsp](https://github.com/uros-5/jinja-lsp/releases).
+Release binaries, also on `PATH`:
+
+- [superhtml](https://github.com/kristoff-it/superhtml/releases) (`superhtml`)
+- [jinja-lsp](https://github.com/uros-5/jinja-lsp/releases) (`jinja-lsp`)
+- [lua-language-server](https://github.com/LuaLS/lua-language-server/releases/latest): extract the release somewhere, then put a wrapper on `PATH` (its docs prefer this over a symlink):
+
+  ```sh
+  printf '#!/bin/sh\nexec "%s/bin/lua-language-server" "$@"\n' "$HOME/path/to/lua-language-server" > ~/.local/bin/lua-language-server
+  chmod +x ~/.local/bin/lua-language-server
+  ```
 
 ## Language servers
 
